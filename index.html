@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴铭君 - 个人主页</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1A1A2E',
+                        'secondary': '#6B7280',
+                        'accent-blue': '#2563EB',
+                        'accent-yellow': '#FBBF24',
+                        'accent-cyan': '#06B6D4',
+                        'bg-light': '#F8F9FA',
+                        'bg-card': '#FFFFFF',
+                        'border-light': '#E5E7EB',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: #F8F9FA;
+            color: #1A1A2E;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Subtle grid pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(37, 99, 235, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(37, 99, 235, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        /* Floating shapes */
+        .floating-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+            top: 10%;
+            right: -100px;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+            bottom: 20%;
+            left: -80px;
+            animation-delay: -5s;
+        }
+        
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #06B6D4 0%, #2563EB 100%);
+            top: 60%;
+            right: 15%;
+            animation-delay: -10s;
+            opacity: 0.2;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+        
+        /* Glass card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.08);
+        }
+        
+        .glass-card-strong {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.12);
+        }
+        
+        /* Avatar styles */
+        .avatar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        
+        .avatar-ring {
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #2563EB, #06B6D4, #FBBF24, #2563EB);
+            animation: rotate 8s linear infinite;
+        }
+        
+        .avatar-ring-inner {
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: #F8F9FA;
+        }
+        
+        .avatar-img {
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB 0%, #06B6D4 50%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2563EB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #1A1A2E;
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #2563EB;
+            color: #2563EB;
+            transform: translateY(-2px);
+        }
+        
+        .btn-yellow {
+            background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+            color: #1A1A2E;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        }
+        
+        .btn-yellow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+        }
+        
+        /* Card hover */
+        .hover-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.15);
+        }
+        
+        /* Timeline */
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #2563EB 0%, #06B6D4 50%, #FBBF24 100%);
+            border-radius: 3px;
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #2563EB;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+        }
+        
+        /* Marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 25s linear infinite;
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* Skill tag */
+        .skill-tag {
+            background: white;
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-tag:hover {
+            border-color: #2563EB;
+            background: rgba(37, 99, 235, 0.05);
+            transform: scale(1.05);
+        }
+        
+        /* Icon styles */
+        .icon-box {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-box-blue {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        }
+        
+        .icon-box-yellow {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
+        }
+        
+        .icon-box-cyan {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+        }
+        
+        /* Link underline */
+        .link-underline {
+            position: relative;
+        }
+        
+        .link-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #2563EB, #FBBF24);
+            transition: width 0.3s ease;
+        }
+        
+        .link-underline:hover::after {
+            width: 100%;
+        }
+        
+        /* Section reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #F8F9FA;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #2563EB, #06B6D4);
+            border-radius: 4px;
+        }
+        
+        /* Language toggle */
+        .lang-toggle {
+            background: white;
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-toggle:hover {
+            border-color: #2563EB;
+            transform: scale(1.05);
+        }
+        
+        /* Custom icons */
+        .custom-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Award badge */
+        .award-badge {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        
+        /* Number highlight */
+        .number-highlight {
+            background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Social icon */
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            border-color: #2563EB;
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            transform: translateY(-3px);
+        }
+        
+        .social-icon:hover svg {
+            stroke: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Background Pattern -->
+        <div class="grid-pattern"></div>
+        
+        <!-- Floating Shapes -->
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        
+        <!-- Language Toggle -->
+        <button 
+            @click="toggleLanguage"
+            class="lang-toggle fixed top-6 left-6 z-50 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium"
+        >
+            <svg class="w-5 h-5 text-accent-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span class="text-primary font-semibold">{{ currentLang === 'zh' ? 'EN' : '中' }}</span>
+        </button>
+        
+        <!-- Navigation -->
+        <nav class="fixed top-6 right-6 z-50">
+            <div class="glass-card px-6 py-3 rounded-full flex items-center gap-6">
+                <a v-for="item in navItems" :key="item.id"
+                   :href="`#${item.id}`"
+                   class="link-underline text-sm text-secondary hover:text-primary transition-colors font-medium"
+                >
+                    {{ currentLang === 'zh' ? item.labelZh : item.labelEn }}
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center relative px-6 py-20">
+            <div class="text-center max-w-4xl mx-auto">
+                <!-- Avatar -->
+                <div class="avatar-container mb-8 reveal">
+                    <div class="avatar-ring"></div>
+                    <div class="avatar-ring-inner"></div>
+                    <img 
+                        :src="profileData.avatarUrl" 
+                        :alt="profileData.name"
+                        class="avatar-img"
+                        @error="$event.target.src='https://api.dicebear.com/7.x/avataaars/svg?seed=wumingjun'"
+                    >
+                </div>
+                
+                <!-- Title -->
+                <p class="text-accent-blue text-sm tracking-[0.3em] uppercase mb-4 font-semibold reveal">
+                    {{ currentLang === 'zh' ? profileData.titleZh : profileData.titleEn }}
+                </p>
+                
+                <!-- Name -->
+                <h1 class="text-6xl md:text-8xl font-black leading-none mb-6 reveal">
+                    <span class="gradient-text-blue">{{ profileData.name }}</span>
+                </h1>
+                
+                <!-- Tagline -->
+                <p class="text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-10 reveal">
+                    {{ currentLang === 'zh' ? profileData.taglineZh : profileData.taglineEn }}
+                </p>
+                
+                <!-- Buttons -->
+                <div class="flex justify-center gap-4 reveal">
+                    <a :href="`mailto:${profileData.email}`"
+                       class="btn-primary px-8 py-4 rounded-full font-semibold flex items-center gap-2"
+                    >
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <span>{{ currentLang === 'zh' ? '联系我' : 'Contact Me' }}</span>
+                    </a>
+                    <a href="#about"
+                       class="btn-secondary px-8 py-4 rounded-full font-semibold flex items-center gap-2"
+                    >
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12l7 7 7-7"/>
+                        </svg>
+                        <span>{{ currentLang === 'zh' ? '了解更多' : 'Learn More' }}</span>
+                    </a>
+                </div>
+                
+                <!-- Stats Row -->
+                <div class="flex justify-center gap-8 md:gap-16 mt-16 reveal">
+                    <div class="text-center">
+                        <div class="text-4xl md:text-5xl font-black number-highlight">{{ profileData.experienceYears }}+</div>
+                        <div class="text-secondary text-sm mt-1">{{ currentLang === 'zh' ? '年经验' : 'Years Exp' }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl md:text-5xl font-black number-highlight">{{ profileData.awards.length }}</div>
+                        <div class="text-secondary text-sm mt-1">{{ currentLang === 'zh' ? '项奖项' : 'Awards' }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl md:text-5xl font-black number-highlight">10+</div>
+                        <div class="text-secondary text-sm mt-1">{{ currentLang === 'zh' ? '项技能' : 'Skills' }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about" class="py-24 px-6 md:px-12 lg:px-24">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <p class="text-accent-blue text-sm tracking-[0.2em] uppercase font-semibold mb-4 reveal">{{ currentLang === 'zh' ? '关于我' : 'ABOUT ME' }}</p>
+                    <h2 class="text-4xl md:text-5xl font-black reveal">
+                        <span class="gradient-text">{{ currentLang === 'zh' ? '个人简介' : 'Who I Am' }}</span>
+                    </h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Bio Card -->
+                    <div class="hover-card glass-card-strong rounded-3xl p-8 md:col-span-2 reveal">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="icon-box icon-box-blue">
+                                <svg class="custom-icon text-accent-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">{{ currentLang === 'zh' ? '个人简介' : 'Bio' }}</h3>
+                        </div>
+                        <p class="text-secondary leading-relaxed text-lg">
+                            {{ currentLang === 'zh' ? profileData.bioZh : profileData.bioEn }}
+                        </p>
+                    </div>
+                    
+                    <!-- Experience Card -->
+                    <div class="hover-card glass-card rounded-3xl p-8 reveal">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="icon-box icon-box-yellow">
+                                <svg class="custom-icon text-accent-yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">{{ currentLang === 'zh' ? '经验' : 'Experience' }}</h3>
+                        </div>
+                        <div class="text-6xl font-black number-highlight mb-2">{{ profileData.experienceYears }}+</div>
+                        <p class="text-secondary">{{ currentLang === 'zh' ? '年学习与实践' : 'Years Learning' }}</p>
+                    </div>
+                    
+                    <!-- Education Card -->
+                    <div class="hover-card glass-card rounded-3xl p-8 reveal">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="icon-box icon-box-cyan">
+                                <svg class="custom-icon text-accent-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">{{ currentLang === 'zh' ? '教育' : 'Education' }}</h3>
+                        </div>
+                        <p class="text-primary font-semibold text-lg">{{ profileData.university }}</p>
+                        <p class="text-secondary">{{ profileData.major }}</p>
+                        <span class="inline-block mt-3 px-3 py-1 bg-accent-blue/10 text-accent-blue text-sm rounded-full font-medium">{{ profileData.educationPeriod }}</span>
+                    </div>
+                    
+                    <!-- Location Card -->
+                    <div class="hover-card glass-card rounded-3xl p-8 reveal">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="icon-box icon-box-blue">
+                                <svg class="custom-icon text-accent-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">{{ currentLang === 'zh' ? '位置' : 'Location' }}</h3>
+                        </div>
+                        <p class="text-3xl font-bold text-primary">{{ profileData.location }}</p>
+                        <p class="text-secondary mt-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            {{ currentLang === 'zh' ? '中国' : 'China' }}
+                        </p>
+                    </div>
+                    
+                    <!-- Awards Count Card -->
+                    <div class="hover-card glass-card rounded-3xl p-8 reveal">
+                        <div class="flex items-start gap-4 mb-6">
+                            <div class="icon-box icon-box-yellow">
+                                <svg class="custom-icon text-accent-yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary">{{ currentLang === 'zh' ? '奖项' : 'Awards' }}</h3>
+                        </div>
+                        <div class="text-6xl font-black number-highlight mb-2">{{ profileData.awards.length }}</div>
+                        <p class="text-secondary">{{ currentLang === 'zh' ? '项竞赛荣誉' : 'Competition Honors' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Experience Section -->
+        <section id="experience" class="py-24 px-6 md:px-12 lg:px-24">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16">
+                    <p class="text-accent-blue text-sm tracking-[0.2em] uppercase font-semibold mb-4 reveal">{{ currentLang === 'zh' ? '经历' : 'EXPERIENCE' }}</p>
+                    <h2 class="text-4xl md:text-5xl font-black reveal">
+                        <span class="gradient-text">{{ currentLang === 'zh' ? '竞赛经历' : 'My Journey' }}</span>
+                    </h2>
+                </div>
+                
+                <div class="relative pl-4 md:pl-0">
+                    <div class="timeline-line"></div>
+                    
+                    <div v-for="(exp, index) in profileData.experiences" :key="index"
+                         class="relative pl-16 md:pl-24 pb-12 reveal"
+                    >
+                        <div class="absolute left-4 md:left-5 top-2 timeline-dot"></div>
+                        
+                        <div class="glass-card rounded-2xl p-6 md:p-8 hover-card">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                                <h3 class="text-xl md:text-2xl font-bold text-primary">{{ exp.title }}</h3>
+                                <span class="inline-block mt-2 md:mt-0 px-4 py-1 bg-accent-blue/10 text-accent-blue text-sm rounded-full font-semibold">{{ exp.period }}</span>
+                            </div>
+                            <p class="text-secondary">{{ currentLang === 'zh' ? exp.descZh : exp.descEn }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Awards -->
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-primary mb-8 reveal">
+                        {{ currentLang === 'zh' ? '获奖证书' : 'Awards & Certificates' }}
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div v-for="(award, index) in profileData.awards" :key="index"
+                             class="award-badge rounded-xl p-5 reveal flex items-start gap-4 hover-card"
+                        >
+                            <div class="w-12 h-12 rounded-xl bg-accent-yellow/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-accent-yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="8" r="7"/>
+                                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-primary font-semibold">{{ award.name }}</p>
+                                <p class="text-secondary text-sm mt-1 flex items-center gap-1">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                    {{ award.year }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Skills Section -->
+        <section id="skills" class="py-24 overflow-hidden">
+            <div class="px-6 md:px-12 lg:px-24 mb-16">
+                <div class="text-center">
+                    <p class="text-accent-blue text-sm tracking-[0.2em] uppercase font-semibold mb-4 reveal">{{ currentLang === 'zh' ? '技能' : 'SKILLS' }}</p>
+                    <h2 class="text-4xl md:text-5xl font-black reveal">
+                        <span class="gradient-text">{{ currentLang === 'zh' ? '技术栈' : 'Tech Stack' }}</span>
+                    </h2>
+                </div>
+            </div>
+            
+            <!-- Marquee Row 1 -->
+            <div class="marquee-container mb-4">
+                <div class="marquee-content">
+                    <div v-for="skill in [...profileData.skills, ...profileData.skills]" :key="skill"
+                         class="skill-tag px-6 py-3 rounded-full mx-2"
+                    >
+                        <span class="text-primary font-semibold">{{ skill }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Marquee Row 2 -->
+            <div class="marquee-container">
+                <div class="marquee-content" style="animation-direction: reverse;">
+                    <div v-for="skill in [...profileData.skillsRow2, ...profileData.skillsRow2]" :key="skill"
+                         class="skill-tag px-6 py-3 rounded-full mx-2"
+                    >
+                        <span class="text-primary font-semibold">{{ skill }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skills Categories -->
+            <div class="px-6 md:px-12 lg:px-24 mt-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div v-for="(category, index) in profileData.skillCategories" :key="index"
+                         class="glass-card rounded-2xl p-8 reveal hover-card"
+                    >
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-3 h-3 rounded-full" :class="index === 0 ? 'bg-accent-blue' : index === 1 ? 'bg-accent-cyan' : 'bg-accent-yellow'"></div>
+                            <h4 class="text-xl font-bold text-primary">{{ currentLang === 'zh' ? category.nameZh : category.nameEn }}</h4>
+                        </div>
+                        <ul class="space-y-3">
+                            <li v-for="item in category.items" :key="item" class="text-secondary flex items-center gap-3">
+                                <svg class="w-5 h-5 text-accent-blue flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                {{ item }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <p class="text-accent-blue text-sm tracking-[0.2em] uppercase font-semibold mb-4 reveal">
+                    {{ currentLang === 'zh' ? '联系' : 'CONTACT' }}
+                </p>
+                <h2 class="text-5xl md:text-7xl font-black mb-6 reveal">
+                    <span class="gradient-text">{{ currentLang === 'zh' ? '让我们合作' : 'Let\'s Connect' }}</span>
+                </h2>
+                <p class="text-secondary text-lg mb-12 max-w-xl mx-auto reveal">
+                    {{ currentLang === 'zh' ? '有项目想法或合作机会？随时与我联系！' : 'Have a project idea or collaboration opportunity? Get in touch!' }}
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 reveal">
+                    <a :href="`mailto:${profileData.email}`"
+                       class="btn-primary px-8 py-4 rounded-full font-semibold flex items-center gap-3"
+                    >
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <span>{{ profileData.email }}</span>
+                    </a>
+                    <a :href="`tel:${profileData.phone}`"
+                       class="btn-yellow px-8 py-4 rounded-full font-semibold flex items-center gap-3"
+                    >
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        <span>{{ profileData.phone }}</span>
+                    </a>
+                </div>
+                
+                <!-- Social Links -->
+                <div class="flex justify-center gap-4 reveal">
+                    <a v-for="social in profileData.socials" :key="social.name"
+                       :href="social.url"
+                       target="_blank"
+                       class="social-icon"
+                    >
+                        <svg class="w-5 h-5 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path v-if="social.icon === 'github'" d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                            <path v-else-if="social.icon === 'linkedin'" d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+                            <circle v-else-if="social.icon === 'linkedin'" cx="4" cy="4" r="2"/>
+                            <path v-else d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline v-else points="22,6 12,13 2,6"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <!-- Copyright -->
+                <div class="mt-20 pt-8 border-t border-border-light reveal">
+                    <p class="text-secondary text-sm">
+                        © {{ new Date().getFullYear() }} {{ profileData.name }}. {{ currentLang === 'zh' ? '保留所有权利' : 'All Rights Reserved' }}
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION - Easy to modify
+        // ============================================
+        const profileData = {
+            // Avatar URL - 请替换为您的头像图片链接
+            avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=wumingjun&backgroundColor=b6e3f4",
+            
+            // Basic Info
+            name: "吴铭君",
+            titleZh: "计算机科学学生 / 全栈开发者",
+            titleEn: "Computer Science Student / Full Stack Developer",
+            taglineZh: "热爱编程与技术创新，专注于Java后端开发与人工智能应用",
+            taglineEn: "Passionate about programming & tech innovation, focusing on Java backend & AI applications",
+            
+            // Contact
+            email: "13313880165@Outlook.com",
+            phone: "13313880165",
+            location: "泉州",
+            
+            // Education
+            university: "泉州师范学院",
+            major: "计算机科学与技术",
+            educationPeriod: "2020.9 - 2026.6",
+            experienceYears: 4,
+            
+            // Bio
+            bioZh: "我是一名计算机科学与技术专业的学生，对软件开发充满热情。在校期间，我系统学习了Java、Python等编程语言，并深入钻研了Spring Boot后端开发、数据库设计以及前端技术。我积极参与各类技术竞赛，曾获得中国机器人及人工智能大赛全国二等奖等多项荣誉。我追求代码的优雅与效率，致力于用技术解决实际问题。",
+            bioEn: "I'm a Computer Science student passionate about software development. I've mastered Java, Python, and delved into Spring Boot backend development, database design, and frontend technologies. I've won multiple awards including 2nd Prize in China Robot & AI Competition. I pursue elegant and efficient code, dedicated to solving real-world problems with technology.",
+            
+            // Experiences
+            experiences: [
+                {
+                    title: "第二十六届中国机器人及人工智能大赛",
+                    period: "2024.06 - 2024.09",
+                    descZh: "参加全国级人工智能竞赛，负责算法设计与程序开发，获得全国总决赛二等奖",
+                    descEn: "Participated in national AI competition, responsible for algorithm design and development, won 2nd Prize in National Finals"
+                },
+                {
+                    title: "第十三届全国海洋航行器设计与制作大赛",
+                    period: "2024.07 - 2024.09",
+                    descZh: "参与海洋航行器设计与制作，负责控制系统软件开发，获得海峡区域赛二等奖",
+                    descEn: "Participated in marine vehicle design, responsible for control system software development, won 2nd Prize in Strait Regional Competition"
+                },
+                {
+                    title: "第十八届中国大学生计算机设计大赛",
+                    period: "2025",
+                    descZh: "参与计算机设计作品开发，获得福建省级三等奖",
+                    descEn: "Participated in computer design competition, won 3rd Prize at Fujian Provincial Level"
+                }
+            ],
+            
+            // Awards
+            awards: [
+                { name: "第二十六届中国机器人及人工智能大赛福建选拔赛一等奖", year: "2024" },
+                { name: "第二十六届中国机器人及人工智能大赛全国总决赛二等奖", year: "2024" },
+                { name: "第十三届全国海洋航行器设计与制作大赛海峡区域赛二等奖", year: "2024" },
+                { name: "第十八届中国大学生计算机设计大赛福建三等奖", year: "2025" },
+                { name: "机动车驾驶证", year: "2024" }
+            ],
+            
+            // Skills - Marquee Row 1
+            skills: [
+                "Java", "Spring Boot", "Python", "MySQL", "Redis", 
+                "Vue.js", "JavaScript", "HTML5", "CSS3", "Git"
+            ],
+            
+            // Skills - Marquee Row 2
+            skillsRow2: [
+                "Linux", "MyBatis", "Maven", "JUnit", "C/C++",
+                "NumPy", "Pandas", "RESTful API", "SQL优化", "多线程"
+            ],
+            
+            // Skill Categories
+            skillCategories: [
+                {
+                    nameZh: "编程语言",
+                    nameEn: "Languages",
+                    items: ["Java (OOP, Collections, Concurrency)", "Python (NumPy, Pandas)", "C/C++", "JavaScript (ES6+)"]
+                },
+                {
+                    nameZh: "Web开发",
+                    nameEn: "Web Development",
+                    items: ["Spring Boot / RESTful API", "Vue.js / Component Dev", "MyBatis", "MySQL / SQL Optimization"]
+                },
+                {
+                    nameZh: "工具与基础",
+                    nameEn: "Tools & Fundamentals",
+                    items: ["Git / Version Control", "Linux / CLI", "Maven", "Data Structures & Algorithms"]
+                }
+            ],
+            
+            // Social Links
+            socials: [
+                { name: "GitHub", icon: "github", url: "https://github.com" },
+                { name: "LinkedIn", icon: "linkedin", url: "https://linkedin.com" },
+                { name: "Email", icon: "mail", url: "mailto:13313880165@Outlook.com" }
+            ]
+        };
+
+        // ============================================
+        // Vue App
+        // ============================================
+        const { createApp, ref, onMounted, nextTick } = Vue;
+
+        createApp({
+            setup() {
+                const currentLang = ref('zh');
+                
+                const navItems = [
+                    { id: 'about', labelZh: '关于', labelEn: 'About' },
+                    { id: 'experience', labelZh: '经历', labelEn: 'Experience' },
+                    { id: 'skills', labelZh: '技能', labelEn: 'Skills' },
+                    { id: 'contact', labelZh: '联系', labelEn: 'Contact' }
+                ];
+                
+                const toggleLanguage = () => {
+                    currentLang.value = currentLang.value === 'zh' ? 'en' : 'zh';
+                };
+                
+                // GSAP Animations
+                const initAnimations = () => {
+                    gsap.registerPlugin(ScrollTrigger);
+                    
+                    // Reveal animations
+                    const reveals = document.querySelectorAll('.reveal');
+                    reveals.forEach((el, index) => {
+                        gsap.to(el, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.6,
+                            ease: "power2.out",
+                            delay: index * 0.05,
+                            scrollTrigger: {
+                                trigger: el,
+                                start: "top 90%",
+                                toggleActions: "play none none none"
+                            }
+                        });
+                    });
+                };
+                
+                onMounted(() => {
+                    nextTick(() => {
+                        initAnimations();
+                    });
+                });
+                
+                return {
+                    currentLang,
+                    navItems,
+                    profileData,
+                    toggleLanguage
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
